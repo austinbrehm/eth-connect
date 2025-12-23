@@ -1,31 +1,41 @@
 """
-Connect to a provider for the Ethereum blockchain.
+Connect to Infura and access Ethereum blockchain data.
 """
 
 import subprocess
 
-from web3 import Web3, EthereumTesterProvider
+from ens import ENS
+from web3 import Web3
 
 
 def get_infura_key() -> str:
-    """Get the Infura API key from bashrc file.
+    """Get the Infura API key from .bashrc file.
 
     Returns:
         key: Infura API key, stored in .bashrc file.
     """
-    subprocess.run("source ~/.bashrc", shell=True)
+    subprocess.run("source ~/.bashrc", shell=True, check=True)
     key = subprocess.run(
-        "echo $INFURA_KEY", shell=True, capture_output=True, text=True
+        "echo $INFURA_KEY", shell=True, capture_output=True, text=True, check=True
     ).stdout.rstrip()
 
     return key
 
 
-# Connect to a test provider.
-# provider = Web3(EthereumTesterProvider())
-# latest_block = provider.eth.get_block("latest")
-# print(latest_block.timestamp)
-
-
 if __name__ == "__main__":
-    print(get_infura_key())
+    # Get Infura API key.
+    api_key = get_infura_key()
+
+    # Connect to Infura via HTTP.
+    provider = Web3(Web3.HTTPProvider(f"https://mainnet.infura.io/v3/{api_key}"))
+
+    # Get ENS address.
+    ens = ENS.from_web3(provider)
+    NAME = "ens.eth"
+    print(f"{NAME}'s Address: {ens.address(NAME)}")
+
+    # Get most recent block number.
+    print(f"Latest Block Number: {provider.eth.get_block_number()}")
+
+    # Get current gas price, in gwei.
+    print(f"Gas Price: {round(provider.eth.gas_price * 10E-10, 3)} gwei")
