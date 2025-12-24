@@ -1,11 +1,13 @@
-"""
-Connect to Infura and access Ethereum blockchain data.
+"""Connect to Infura and access Ethereum blockchain data.
+
+This module is meant to be executed as a script. It will retrieve
+an Infura API key, connect to Infura, and retrieve data. 
 """
 
 import subprocess
 
-from ens import ENS
-from web3 import Web3
+import ens
+import web3
 
 
 def get_infura_key() -> str:
@@ -27,10 +29,12 @@ if __name__ == "__main__":
     api_key = get_infura_key()
 
     # Connect to Infura via HTTP.
-    provider = Web3(Web3.HTTPProvider(f"https://mainnet.infura.io/v3/{api_key}"))
+    provider = web3.Web3(
+        web3.Web3.HTTPProvider(f"https://mainnet.infura.io/v3/{api_key}")
+    )
 
     # Get ENS address.
-    ens = ENS.from_web3(provider)
+    ens = ens.ENS.from_web3(provider)
     NAME = "ens.eth"
     print(f"{NAME}'s Address: {ens.address(NAME)}")
 
