@@ -1,2 +1,2 @@
-# Web3
-Explore web3!
+# eth-connect
+Retrieve data from the Ethereum blockchain. 
